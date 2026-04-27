@@ -118,7 +118,7 @@ Processes a payment request. Uses the `Idempotency-Key` header to ensure the pay
     "message": "Charged 100.00 KES",
     "status": "SUCCESS",
     "idempotencyKey": "my-unique-key-001",
-    "processedAt": "2026-04-27T10:00:00Z"
+    "processedAt": "2026-04-27T11:08:07.567929500Z"
 }
 ```
 
@@ -129,7 +129,7 @@ Same response body as the first request, plus response header: X-Cache-Hit: true
 **422 Unprocessable Entity — Same Key, Different Body**
 ```json
 {
-    "timestamp": "2026-04-27T10:00:00Z",
+    "timestamp": "2026-04-27T11:14:55.742901200Z",
     "status": 422,
     "error": "Unprocessable Entity",
     "message": "Idempotency key already used for a different request body."
@@ -139,7 +139,7 @@ Same response body as the first request, plus response header: X-Cache-Hit: true
 **400 Bad Request — Missing Idempotency-Key Header**
 ```json
 {
-    "timestamp": "2026-04-27T10:00:00Z",
+    "timestamp": "2026-04-27T11:13:26.517072900Z",
     "status": 400,
     "error": "Bad Request",
     "message": "Missing required header: Idempotency-Key"
@@ -149,7 +149,7 @@ Same response body as the first request, plus response header: X-Cache-Hit: true
 **400 Bad Request — Invalid Request Body**
 ```json
 {
-    "timestamp": "2026-04-27T10:00:00Z",
+    "timestamp": "2026-04-27T11:13:27.517072900Z",
     "status": 400,
     "error": "Validation Failed",
     "details": {
