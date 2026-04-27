@@ -1,4 +1,4 @@
-# Idempotency Gateway — FinSafe Transactions Ltd.
+# Idempotency Gateway - FinSafe Transactions Ltd.
 
 A production-grade idempotency layer built with Java and Spring Boot that ensures payment requests are processed **exactly once**, regardless of how many times they are retried.
 
@@ -112,7 +112,7 @@ Processes a payment request. Uses the `Idempotency-Key` header to ensure the pay
 
 #### Response Examples
 
-**201 Created — First Request**
+**201 Created: First Request**
 ```json
 {
     "message": "Charged 100.00 KES",
@@ -122,11 +122,11 @@ Processes a payment request. Uses the `Idempotency-Key` header to ensure the pay
 }
 ```
 
-**200 OK — Duplicate Request**
+**200 OK: Duplicate Request**
 
 Same response body as the first request, plus response header: X-Cache-Hit: true
 
-**422 Unprocessable Entity — Same Key, Different Body**
+**422 Unprocessable Entity: Same Key, Different Body**
 ```json
 {
     "timestamp": "2026-04-27T11:14:55.742901200Z",
@@ -136,7 +136,7 @@ Same response body as the first request, plus response header: X-Cache-Hit: true
 }
 ```
 
-**400 Bad Request — Missing Idempotency-Key Header**
+**400 Bad Request: Missing Idempotency-Key Header**
 ```json
 {
     "timestamp": "2026-04-27T11:13:26.517072900Z",
@@ -146,10 +146,10 @@ Same response body as the first request, plus response header: X-Cache-Hit: true
 }
 ```
 
-**400 Bad Request — Invalid Request Body**
+**400 Bad Request: Invalid Request Body**
 ```json
 {
-    "timestamp": "2026-04-27T11:13:27.517072900Z",
+    "timestamp": "2026-04-27T11:13:28.617202400Z",
     "status": 400,
     "error": "Validation Failed",
     "details": {
@@ -170,7 +170,7 @@ Redis was chosen over an in-memory Map because it supports TTL expiry natively, 
 The request body is hashed using SHA-256 before storage. This allows efficient comparison of payloads without storing the full request body, and enables detection of fraudulent attempts to reuse a key with a different payload.
 
 ### 3. ReentrantLock for Race Condition Handling
-A ConcurrentHashMap of ReentrantLocks is used to manage per-key locks. When two identical requests arrive simultaneously, the second request waits for the first to complete and then returns the cached result — preventing double processing without returning an error.
+A ConcurrentHashMap of ReentrantLocks is used to manage per-key locks. When two identical requests arrive simultaneously, the second request waits for the first to complete and then returns the cached result, preventing double processing without returning an error.
 
 ### 4. BigDecimal for Monetary Values
 BigDecimal is used instead of double or float for the payment amount. Floating point types cannot accurately represent all decimal values, which is unacceptable in a financial system where precision is critical.
@@ -182,8 +182,8 @@ BigDecimal is used instead of double or float for the payment amount. Floating p
 ### What Was Added
 Idempotency keys automatically expire after **24 hours** via Redis TTL configuration.
 
-### Why
-In a real fintech system, storing idempotency keys forever would cause the Redis store to grow indefinitely, eventually exhausting memory. A 24-hour TTL reflects real-world payment industry standards — payment retries are only valid within a short window. After 24 hours, the same key can be safely reused for a new transaction.
+### The reason
+In a real fintech system, storing idempotency keys forever would cause the Redis store to grow indefinitely, eventually exhausting memory. A 24-hour TTL reflects real-world payment industry standards. Payment retries are only valid within a short window. After 24 hours, the same key can be safely reused for a new transaction.
 
 This is configurable via `application.properties`:
 ```properties
@@ -194,6 +194,7 @@ idempotency.key.ttl=86400
 
 ## Project Structure
 
+```
 src/
 ├── main/java/com/finsafe/idempotency_gateway/
 │   ├── config/
@@ -215,8 +216,9 @@ src/
 │   └── service/
 │       └── IdempotencyService.java
 └── test/java/com/finsafe/idempotency_gateway/
-└── service/
-└── IdempotencyServiceTest.java
+    └── service/
+        └── IdempotencyServiceTest.java
+```
 
 
 ---
